@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: netshoot
+spec:
+  containers:
+    - command:
+        - sleep
+        - "72000"
+      image: nicolaka/netshoot
+      imagePullPolicy: IfNotPresent
+      name: netshoot
+      resources:
+        limits:
+          cpu: "200m"
+          memory: 100Mi
+        requests:
+          cpu: "200m"
+          memory: 100Mi
+  serviceAccount: gitana
