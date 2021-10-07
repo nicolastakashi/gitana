@@ -2,6 +2,7 @@ package pullcommand
 
 import (
 	"errors"
+	"time"
 
 	"github.com/gitana/internal/gitmanager"
 	"github.com/sirupsen/logrus"
@@ -12,6 +13,7 @@ type Command struct {
 	Namespace                 string
 	Repository                gitmanager.Repository
 	DashboardFolderAnnotation string
+	SyncTimer                 time.Duration
 }
 
 func (pcmd *Command) Validate() error {
