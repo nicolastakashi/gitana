@@ -2,7 +2,7 @@ package gitana
 
 import (
 	"context"
-	"os"
+	"time"
 
 	"github.com/gitana/internal/dashboardloader"
 	"github.com/gitana/internal/k8sclient"
@@ -11,30 +11,48 @@ import (
 	v1 "k8s.io/api/core/v1"
 )
 
-func Start(ctx context.Context, pcmd pullcommand.Command) {
+func Start(ctx context.Context, pcmd pullcommand.Command) error {
+	t := time.NewTimer(1 * time.Millisecond)
+	for {
+		select {
+		case <-t.C:
+			if err := start(ctx, pcmd); err != nil {
+				return err
+			} else {
+				logrus.Info("dashboards sync is done")
+			}
+			t.Reset(pcmd.SyncTimer)
+		case <-ctx.Done():
+			logrus.Info("shut down gitana syncer")
+			return nil
+		}
+	}
+}
+
+func start(ctx context.Context, pcmd pullcommand.Command) error {
 	_, err := pcmd.Repository.Get(ctx)
 
 	if err != nil {
-		os.Exit(1)
+		return err
 	}
 
 	dashboards := dashboardloader.Load(pcmd.Repository.Path)
 
 	if len(dashboards) == 0 {
 		logrus.Warn("no dashboards found")
-		os.Exit(0)
+		return nil
 	}
 
 	client, err := k8sclient.New()
 
 	if err != nil {
-		os.Exit(1)
+		return err
 	}
 
 	configMaps, err := client.GetConfigMaps(pcmd.Namespace)
 
 	if err != nil {
-		os.Exit(1)
+		return err
 	}
 
 	for _, dashboard := range dashboards {
@@ -46,22 +64,21 @@ func Start(ctx context.Context, pcmd pullcommand.Command) {
 		}
 
 		if ccm, ok := configMaps[dashboard.Name]; !ok {
-			createConfigMap(client, &cm, &dashboard)
-		} else if dashboard.NeedsToUpdate(&ccm, &cm) {
-			updateConfigMap(client, &ccm, &cm, &dashboard)
+			createConfigMap(client, cm, dashboard)
+		} else if dashboard.NeedsToUpdate(ccm, cm) {
+			updateConfigMap(client, ccm, cm, dashboard)
 		}
 	}
 
 	for _, cm := range configMaps {
 		if dashboard, ok := dashboards[cm.Name]; !ok {
-			deleteConfigMap(client, &cm, &dashboard)
+			deleteConfigMap(client, cm, &dashboard)
 		}
 	}
-
-	logrus.Info("dashboards sync is done")
+	return nil
 }
 
-func createConfigMap(client *k8sclient.K8sClient, cm *v1.ConfigMap, dashboard *dashboardloader.Dashboard) {
+func createConfigMap(client *k8sclient.K8sClient, cm v1.ConfigMap, dashboard dashboardloader.Dashboard) {
 	logrus.Debugf("creating dashboard %v", dashboard.FileName)
 
 	_, err := client.CreateConfigMap(cm)
@@ -71,7 +88,7 @@ func createConfigMap(client *k8sclient.K8sClient, cm *v1.ConfigMap, dashboard *d
 	}
 }
 
-func updateConfigMap(client *k8sclient.K8sClient, ccm *v1.ConfigMap, cm *v1.ConfigMap, dashboard *dashboardloader.Dashboard) {
+func updateConfigMap(client *k8sclient.K8sClient, ccm v1.ConfigMap, cm v1.ConfigMap, dashboard dashboardloader.Dashboard) {
 	logrus.Debugf("updating dashboard %v", dashboard.FileName)
 
 	_, err := client.UpdateConfigMap(ccm, cm)
@@ -81,7 +98,7 @@ func updateConfigMap(client *k8sclient.K8sClient, ccm *v1.ConfigMap, cm *v1.Conf
 	}
 }
 
-func deleteConfigMap(client *k8sclient.K8sClient, cm *v1.ConfigMap, dashboard *dashboardloader.Dashboard) {
+func deleteConfigMap(client *k8sclient.K8sClient, cm v1.ConfigMap, dashboard *dashboardloader.Dashboard) {
 	err := client.DeleteConfigMap(cm)
 
 	if err != nil {

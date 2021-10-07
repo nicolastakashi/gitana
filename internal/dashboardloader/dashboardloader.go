@@ -92,7 +92,7 @@ func getSanitizedName(name string) string {
 	return m.ReplaceAllString(name, "")
 }
 
-func (d *Dashboard) ToConfigMap(namespace string, dashBoardLabels string, folderAnnotation string) (v1.ConfigMap, error) {
+func (d Dashboard) ToConfigMap(namespace string, dashBoardLabels string, folderAnnotation string) (v1.ConfigMap, error) {
 
 	json, err := json.MarshalIndent(d.Dashboard, "", " ")
 
@@ -136,7 +136,7 @@ func parseDashboardLabels(dashBoardLabels string) map[string]string {
 	return labels
 }
 
-func (d *Dashboard) NeedsToUpdate(ccm *v1.ConfigMap, dcm *v1.ConfigMap) bool {
+func (d *Dashboard) NeedsToUpdate(ccm v1.ConfigMap, dcm v1.ConfigMap) bool {
 
 	if !reflect.DeepEqual(ccm.ObjectMeta.Labels, dcm.ObjectMeta.Labels) {
 		return true

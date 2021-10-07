@@ -53,8 +53,8 @@ func (kc *K8sClient) GetConfigMaps(namespace string) (map[string]v1.ConfigMap, e
 	return cmMap, nil
 }
 
-func (kc *K8sClient) CreateConfigMap(cm *v1.ConfigMap) (*v1.ConfigMap, error) {
-	ncm, err := kc.client.CoreV1().ConfigMaps(cm.Namespace).Create(context.TODO(), cm, metav1.CreateOptions{})
+func (kc *K8sClient) CreateConfigMap(cm v1.ConfigMap) (*v1.ConfigMap, error) {
+	ncm, err := kc.client.CoreV1().ConfigMaps(cm.Namespace).Create(context.TODO(), &cm, metav1.CreateOptions{})
 	if err != nil {
 		logrus.Error("error to create config map %v", err)
 		return &v1.ConfigMap{}, err
@@ -62,10 +62,10 @@ func (kc *K8sClient) CreateConfigMap(cm *v1.ConfigMap) (*v1.ConfigMap, error) {
 	return ncm, nil
 }
 
-func (kc *K8sClient) UpdateConfigMap(ccm *v1.ConfigMap, dcm *v1.ConfigMap) (*v1.ConfigMap, error) {
+func (kc *K8sClient) UpdateConfigMap(ccm v1.ConfigMap, dcm v1.ConfigMap) (*v1.ConfigMap, error) {
 	dcm.SetResourceVersion(ccm.GetResourceVersion())
 
-	cm, err := kc.client.CoreV1().ConfigMaps(ccm.Namespace).Update(context.TODO(), dcm, metav1.UpdateOptions{})
+	cm, err := kc.client.CoreV1().ConfigMaps(ccm.Namespace).Update(context.TODO(), &dcm, metav1.UpdateOptions{})
 	if err != nil {
 		logrus.Error("error to update config map %v", err)
 		return cm, err
@@ -73,7 +73,7 @@ func (kc *K8sClient) UpdateConfigMap(ccm *v1.ConfigMap, dcm *v1.ConfigMap) (*v1.
 	return cm, nil
 }
 
-func (kc *K8sClient) DeleteConfigMap(cm *v1.ConfigMap) error {
+func (kc *K8sClient) DeleteConfigMap(cm v1.ConfigMap) error {
 	err := kc.client.CoreV1().ConfigMaps(cm.Namespace).Delete(context.TODO(), cm.Name, metav1.DeleteOptions{})
 	if err != nil {
 		return err
