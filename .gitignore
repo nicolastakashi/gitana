@@ -177,7 +177,6 @@ Temporary Items
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
 
@@ -216,3 +215,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/go,linux,windows,macos,visualstudiocode,jetbrains
+
+gitana
