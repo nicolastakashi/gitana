@@ -25,6 +25,7 @@ import (
 	"time"
 
 	"github.com/gitana/internal/gitana"
+	"github.com/gitana/internal/logging"
 	"github.com/gitana/internal/pullcommand"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
@@ -41,13 +42,9 @@ var pullCmd = &cobra.Command{
 		os.Setenv("KUBERNETES_SERVICE_HOST", "127.0.0.1")
 		os.Setenv("KUBERNETES_SERVICE_PORT", "33295")
 
-		lvl, err := logrus.ParseLevel(pcmd.LogLevel)
-		if err != nil {
-			logrus.Error("error to parse log level %v", err)
+		if err := logging.Configure(pcmd.LogLevel); err != nil {
 			os.Exit(1)
 		}
-
-		logrus.SetLevel(lvl)
 
 		logrus.Info("Welcome to gitana...")
 
