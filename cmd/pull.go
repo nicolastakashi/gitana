@@ -39,8 +39,6 @@ var pullCmd = &cobra.Command{
 	Short: "Pull grafana dashboards from Git repository and creates the required configMap",
 	Long:  `The pull command pulls the Grafana dashboards from a Git repository and foreach dashboard it will creates a config map for that dashboard:`,
 	Run: func(cmd *cobra.Command, args []string) {
-		os.Setenv("KUBERNETES_SERVICE_HOST", "127.0.0.1")
-		os.Setenv("KUBERNETES_SERVICE_PORT", "33295")
 
 		if err := logging.Configure(pcmd.LogLevel); err != nil {
 			os.Exit(1)
