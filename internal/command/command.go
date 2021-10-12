@@ -1,4 +1,4 @@
-package pullcommand
+package command
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type Command struct {
+type Sync struct {
 	DashboardLabels           string
 	Namespace                 string
 	Repository                gitmanager.Repository
@@ -18,7 +18,7 @@ type Command struct {
 	KubeConfig                string
 }
 
-func (pcmd *Command) Validate() error {
+func (pcmd *Sync) Validate() error {
 	logrus.Info("Validating flags")
 
 	if pcmd.Namespace == "" {

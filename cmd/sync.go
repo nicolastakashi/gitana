@@ -24,9 +24,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gitana/internal/command"
 	"github.com/gitana/internal/gitana"
 	"github.com/gitana/internal/logging"
-	"github.com/gitana/internal/pullcommand"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
@@ -34,10 +34,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var pullCmd = &cobra.Command{
-	Use:   "pull",
-	Short: "Pull grafana dashboards from Git repository and creates the required configMap",
-	Long:  `The pull command pulls the Grafana dashboards from a Git repository and foreach dashboard it will creates a config map for that dashboard:`,
+var syncCmd = &cobra.Command{
+	Use:   "sync",
+	Short: "Sync grafana dashboards from Git repository and to configMap",
+	Long:  `The sync command pulls the Grafana dashboards from a Git repository and foreach dashboard it will creates a config map for that dashboard:`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if err := logging.Configure(pcmd.LogLevel); err != nil {
@@ -109,19 +109,19 @@ func createHttpServer(port string) *http.Server {
 	return srv
 }
 
-var pcmd = &pullcommand.Command{}
+var pcmd = &command.Sync{}
 var serverPort = ""
 
 func init() {
-	pullCmd.Flags().StringVar(&serverPort, "http.port", ":9754", "listem port for http endpoints")
-	pullCmd.Flags().StringVar(&pcmd.Repository.Url, "repository.url", "", "git repository url")
-	pullCmd.Flags().StringVar(&pcmd.Repository.Path, "repository.path", "", "path to clone the git repository")
-	pullCmd.Flags().StringVar(&pcmd.Repository.Branch, "repository.branch", "main", "path to clone the git repository")
-	pullCmd.Flags().StringVar(&pcmd.Namespace, "namespace", "default", "namespace that will store the dashboard config map")
-	pullCmd.Flags().StringVar(&pcmd.DashboardLabels, "dashboard.labels", "grafana_dashboard=nil", "dashboard label selector")
-	pullCmd.Flags().StringVar(&pcmd.DashboardFolderAnnotation, "dashboard.folder-annotation", "", "dashboard folder annotation")
-	pullCmd.Flags().DurationVar(&pcmd.SyncTimer, "sync-timer", 10*time.Second, "interval to pull and sync dashboards")
-	pullCmd.Flags().StringVar(&pcmd.LogLevel, "log.level", logrus.InfoLevel.String(), "listem port for http endpoints")
-	pullCmd.Flags().StringVar(&pcmd.KubeConfig, "kubeconfig", "", "(optional) absolute path to the kubeconfig file")
-	rootCmd.AddCommand(pullCmd)
+	syncCmd.Flags().StringVar(&serverPort, "http.port", ":9754", "listem port for http endpoints")
+	syncCmd.Flags().StringVar(&pcmd.Repository.Url, "repository.url", "", "git repository url")
+	syncCmd.Flags().StringVar(&pcmd.Repository.Path, "repository.path", "", "path to clone the git repository")
+	syncCmd.Flags().StringVar(&pcmd.Repository.Branch, "repository.branch", "main", "path to clone the git repository")
+	syncCmd.Flags().StringVar(&pcmd.Namespace, "namespace", "default", "namespace that will store the dashboard config map")
+	syncCmd.Flags().StringVar(&pcmd.DashboardLabels, "dashboard.labels", "grafana_dashboard=nil", "dashboard label selector")
+	syncCmd.Flags().StringVar(&pcmd.DashboardFolderAnnotation, "dashboard.folder-annotation", "", "dashboard folder annotation")
+	syncCmd.Flags().DurationVar(&pcmd.SyncTimer, "sync-timer", 10*time.Second, "interval to sync and sync dashboards")
+	syncCmd.Flags().StringVar(&pcmd.LogLevel, "log.level", logrus.InfoLevel.String(), "listem port for http endpoints")
+	syncCmd.Flags().StringVar(&pcmd.KubeConfig, "kubeconfig", "", "(optional) absolute path to the kubeconfig file")
+	rootCmd.AddCommand(syncCmd)
 }

@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
+	"github.com/gitana/internal/command"
 	"github.com/gitana/internal/dashboardloader"
 	"github.com/gitana/internal/k8sclient"
-	"github.com/gitana/internal/pullcommand"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sirupsen/logrus"
@@ -43,7 +43,7 @@ var syncErrorTotal = promauto.NewCounter(
 	},
 )
 
-func Start(ctx context.Context, pcmd pullcommand.Command) error {
+func Start(ctx context.Context, pcmd command.Sync) error {
 
 	t := time.NewTimer(1 * time.Millisecond)
 
@@ -68,7 +68,7 @@ func Start(ctx context.Context, pcmd pullcommand.Command) error {
 	}
 }
 
-func start(ctx context.Context, pcmd pullcommand.Command) error {
+func start(ctx context.Context, pcmd command.Sync) error {
 	timer := prometheus.NewTimer(syncLatency)
 
 	_, err := pcmd.Repository.Get(ctx)
