@@ -7,20 +7,58 @@ import (
 	"github.com/gitana/internal/dashboardloader"
 	"github.com/gitana/internal/k8sclient"
 	"github.com/gitana/internal/pullcommand"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
 )
 
+var lastSuccessfulSync = promauto.NewGauge(prometheus.GaugeOpts{
+	Namespace: "gitana",
+	Name:      "last_success_sync_timestamp_seconds",
+	Help:      "Unix timestamp of the last successful dashboard sync in seconds",
+})
+
+var syncLatency = promauto.NewSummary(
+	prometheus.SummaryOpts{
+		Namespace: "gitana",
+		Name:      "sync_time_seconds",
+		Help:      "Time taken by the sync operation",
+	},
+)
+
+var syncSuccessTotal = promauto.NewCounter(
+	prometheus.CounterOpts{
+		Namespace: "gitana",
+		Name:      "sync_total_success",
+		Help:      "Total number of successful sync operations",
+	},
+)
+
+var syncErrorTotal = promauto.NewCounter(
+	prometheus.CounterOpts{
+		Namespace: "gitana",
+		Name:      "sync_total_error",
+		Help:      "Total number of sync operations with errors",
+	},
+)
+
 func Start(ctx context.Context, pcmd pullcommand.Command) error {
+
 	t := time.NewTimer(1 * time.Millisecond)
+
 	for {
 		select {
 		case <-t.C:
 			if err := start(ctx, pcmd); err != nil {
+				syncErrorTotal.Inc()
 				return err
 			} else {
 				logrus.Info("dashboards sync is done")
+				syncSuccessTotal.Inc()
+				lastSuccessfulSync.SetToCurrentTime()
 			}
+
 			t.Reset(pcmd.SyncTimer)
 		case <-ctx.Done():
 			logrus.Info("shut down gitana syncer")
@@ -30,6 +68,8 @@ func Start(ctx context.Context, pcmd pullcommand.Command) error {
 }
 
 func start(ctx context.Context, pcmd pullcommand.Command) error {
+	timer := prometheus.NewTimer(syncLatency)
+
 	_, err := pcmd.Repository.Get(ctx)
 
 	if err != nil {
@@ -75,6 +115,9 @@ func start(ctx context.Context, pcmd pullcommand.Command) error {
 			deleteConfigMap(client, cm, &dashboard)
 		}
 	}
+
+	timer.ObserveDuration()
+
 	return nil
 }
 

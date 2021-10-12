@@ -17,8 +17,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
-	"html"
 	"log"
 	"net/http"
 	"os"
@@ -28,6 +26,7 @@ import (
 
 	"github.com/gitana/internal/gitana"
 	"github.com/gitana/internal/pullcommand"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 
@@ -99,9 +98,7 @@ var pullCmd = &cobra.Command{
 func createHttpServer(port string) *http.Server {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
-	})
+	mux.Handle("/metrics", promhttp.Handler())
 
 	srv := &http.Server{
 		Addr:     port,
