@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${fileDirname}",
-            "args": ["pull", "--repository.url=https://github.com/nicolastakashi/poc", "--repository.path=/tmp/gitana/dashboards", "--dashboard.labels=grafana_dashboard=true", "--dashboard.folder-annotation=dashboard-folder"]
+            "args": ["pull", "--repository.url=https://github.com/nicolastakashi/poc", "--repository.path=/tmp/gitana/dashboards", "--dashboard.labels=grafana_dashboard=true", "--dashboard.folder-annotation=dashboard-folder", "--log.level=debug"]
         }
     ]
 }

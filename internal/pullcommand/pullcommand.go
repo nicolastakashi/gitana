@@ -14,6 +14,7 @@ type Command struct {
 	Repository                gitmanager.Repository
 	DashboardFolderAnnotation string
 	SyncTimer                 time.Duration
+	LogLevel                  string
 }
 
 func (pcmd *Command) Validate() error {

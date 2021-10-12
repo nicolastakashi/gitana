@@ -41,7 +41,13 @@ var pullCmd = &cobra.Command{
 		os.Setenv("KUBERNETES_SERVICE_HOST", "127.0.0.1")
 		os.Setenv("KUBERNETES_SERVICE_PORT", "33295")
 
-		logrus.SetLevel(logrus.DebugLevel)
+		lvl, err := logrus.ParseLevel(pcmd.LogLevel)
+		if err != nil {
+			logrus.Error("error to parse log level %v", err)
+			os.Exit(1)
+		}
+
+		logrus.SetLevel(lvl)
 
 		logrus.Info("Welcome to gitana...")
 
@@ -112,13 +118,14 @@ var pcmd = &pullcommand.Command{}
 var serverPort = ""
 
 func init() {
+	pullCmd.Flags().StringVar(&serverPort, "http.port", ":9754", "listem port for http endpoints")
 	pullCmd.Flags().StringVar(&pcmd.Repository.Url, "repository.url", "", "git repository url")
 	pullCmd.Flags().StringVar(&pcmd.Repository.Path, "repository.path", "", "path to clone the git repository")
 	pullCmd.Flags().StringVar(&pcmd.Repository.Branch, "repository.branch", "main", "path to clone the git repository")
 	pullCmd.Flags().StringVar(&pcmd.Namespace, "namespace", "default", "namespace that will store the dashboard config map")
 	pullCmd.Flags().StringVar(&pcmd.DashboardLabels, "dashboard.labels", "grafana_dashboard=nil", "dashboard label selector")
 	pullCmd.Flags().StringVar(&pcmd.DashboardFolderAnnotation, "dashboard.folder-annotation", "", "dashboard folder annotation")
-	pullCmd.Flags().StringVar(&serverPort, "http.port", ":9754", "listem port for http endpoints")
 	pullCmd.Flags().DurationVar(&pcmd.SyncTimer, "sync-timer", 10*time.Second, "interval to pull and sync dashboards")
+	pullCmd.Flags().StringVar(&pcmd.LogLevel, "log.level", logrus.InfoLevel.String(), "listem port for http endpoints")
 	rootCmd.AddCommand(pullCmd)
 }
