@@ -84,7 +84,7 @@ func start(ctx context.Context, pcmd pullcommand.Command) error {
 		return nil
 	}
 
-	client, err := k8sclient.New()
+	client, err := k8sclient.New(pcmd.KubeConfig)
 
 	if err != nil {
 		return err

@@ -8,17 +8,28 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	restclient "k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 type K8sClient struct {
 	client kubernetes.Clientset
 }
 
-func New() (*K8sClient, error) {
-	config, err := rest.InClusterConfig()
+func New(kubeConfig string) (*K8sClient, error) {
+	var config *restclient.Config = nil
+	var err error = nil
+
+	if kubeConfig != "" {
+		logrus.Info("using kube config file")
+		config, err = clientcmd.BuildConfigFromFlags("", kubeConfig)
+	} else {
+		logrus.Info("using in cluster config")
+		config, err = rest.InClusterConfig()
+	}
 
 	if err != nil {
-		logrus.Error("error while get in cluster config: %v", err)
+		logrus.Error("error while rest client config: %v", err)
 		return nil, err
 	}
 

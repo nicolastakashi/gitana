@@ -124,5 +124,6 @@ func init() {
 	pullCmd.Flags().StringVar(&pcmd.DashboardFolderAnnotation, "dashboard.folder-annotation", "", "dashboard folder annotation")
 	pullCmd.Flags().DurationVar(&pcmd.SyncTimer, "sync-timer", 10*time.Second, "interval to pull and sync dashboards")
 	pullCmd.Flags().StringVar(&pcmd.LogLevel, "log.level", logrus.InfoLevel.String(), "listem port for http endpoints")
+	pullCmd.Flags().StringVar(&pcmd.KubeConfig, "kubeconfig", "", "(optional) absolute path to the kubeconfig file")
 	rootCmd.AddCommand(pullCmd)
 }

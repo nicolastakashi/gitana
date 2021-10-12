@@ -15,6 +15,7 @@ type Command struct {
 	DashboardFolderAnnotation string
 	SyncTimer                 time.Duration
 	LogLevel                  string
+	KubeConfig                string
 }
 
 func (pcmd *Command) Validate() error {
