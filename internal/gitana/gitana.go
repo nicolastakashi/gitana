@@ -50,11 +50,12 @@ func Start(ctx context.Context, pcmd pullcommand.Command) error {
 	for {
 		select {
 		case <-t.C:
+			logrus.Info("start new sync operation")
 			if err := start(ctx, pcmd); err != nil {
 				syncErrorTotal.Inc()
 				return err
 			} else {
-				logrus.Info("dashboards sync is done")
+				logrus.Info("dashboards sync operation is done")
 				syncSuccessTotal.Inc()
 				lastSuccessfulSync.SetToCurrentTime()
 			}
