@@ -6,7 +6,7 @@ One of the easiest ways to contribute is to participate in discussions and discu
 Please start a discussion on the [Home repo issue tracker](https://github.com/nicolastakashi/gitana/issues).
 
 ## Filing issues
-When filing issues, please use our [issue templates](https://github.com/nicolastakashi/gitana/blob/contributing-md/ISSUE_TEMPLATE.MD).
+When filing issues, please use our [issue templates](https://github.com/nicolastakashi/gitana/tree/main/.github/ISSUE_TEMPLATE).
 The best way to get your bug fixed is to be as detailed as you can be about the problem.
 Providing a minimal project with steps to reproduce the problem is ideal.
 Here are questions you can answer before you file a bug to make sure you're not missing any important information.
