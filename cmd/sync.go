@@ -27,7 +27,9 @@ import (
 	"github.com/gitana/internal/command"
 	"github.com/gitana/internal/gitana"
 	"github.com/gitana/internal/logging"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/prometheus/common/version"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 
@@ -57,6 +59,12 @@ var syncCmd = &cobra.Command{
 		signal.Notify(term, os.Interrupt, syscall.SIGTERM)
 
 		srv := createHttpServer(serverPort)
+
+		err := prometheus.DefaultRegisterer.Register(version.NewCollector("gitana"))
+
+		if err != nil {
+			logrus.Errorf("error to register version collector %v", err)
+		}
 
 		logrus.Info("listen on " + serverPort)
 
