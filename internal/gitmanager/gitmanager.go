@@ -62,14 +62,14 @@ func (r *Repository) Get(ctx context.Context) (bool, error) {
 		repo, err := git.PlainOpen(r.Path)
 
 		if err != nil {
-			logrus.Error("error opening git repository folder: %v", err)
+			logrus.Errorf("error opening git repository folder: %v", err)
 			return false, err
 		}
 
 		workTree, err := repo.Worktree()
 
 		if err != nil {
-			logrus.Error("error getting git repository worktree: %v", err)
+			logrus.Errorf("error getting git repository worktree: %v", err)
 			return false, err
 		}
 
@@ -86,22 +86,22 @@ func (r *Repository) Get(ctx context.Context) (bool, error) {
 			break
 		case err.(*os.PathError):
 
-			logrus.Warn("conflicts with current repo. cloning again. %v", err)
+			logrus.Warnf("conflicts with current repo. cloning again. %v", err)
 
 			err = os.RemoveAll(r.Path)
 
 			if err != nil {
-				logrus.Error("error deleting repo folder: %v", err)
+				logrus.Errorf("error deleting repo folder: %v", err)
 				return false, err
 			}
 
 			return r.Get(ctx)
 		default:
-			logrus.Error("error pulling repo: %v", err)
+			logrus.Errorf("error pulling repo: %v", err)
 			return false, err
 		}
 	} else if err != nil {
-		logrus.Error("error to clone git repository: %v", err)
+		logrus.Errorf("error to clone git repository: %v", err)
 		return false, err
 	}
 	return true, nil

@@ -97,7 +97,7 @@ func (d Dashboard) ToConfigMap(namespace string, dashBoardLabels string, folderA
 	json, err := json.MarshalIndent(d.Dashboard, "", " ")
 
 	if err != nil {
-		logrus.Error("error to marshal dashboard content %v", err)
+		logrus.Errorf("error to marshal dashboard content %v", err)
 		return v1.ConfigMap{}, err
 	}
 

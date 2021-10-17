@@ -19,7 +19,7 @@ func (splitter *OutputSplitter) Write(p []byte) (n int, err error) {
 func Configure(logLevel string) error {
 	lvl, err := logrus.ParseLevel(logLevel)
 	if err != nil {
-		logrus.Error("error to parse log level %v", err)
+		logrus.Errorf("error to parse log level %v", err)
 		return err
 	}
 

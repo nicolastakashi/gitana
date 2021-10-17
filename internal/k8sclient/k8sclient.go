@@ -29,14 +29,14 @@ func New(kubeConfig string) (*K8sClient, error) {
 	}
 
 	if err != nil {
-		logrus.Error("error while rest client config: %v", err)
+		logrus.Errorf("error while rest client config: %v", err)
 		return nil, err
 	}
 
 	clientset, err := kubernetes.NewForConfig(config)
 
 	if err != nil {
-		logrus.Error("error while creating k8s client: %v", err)
+		logrus.Errorf("error while creating k8s client: %v", err)
 		return nil, err
 	}
 
@@ -51,7 +51,7 @@ func (kc *K8sClient) GetConfigMaps(namespace string) (map[string]v1.ConfigMap, e
 		LabelSelector: "app.kubernetes.io/managed-by=gitana",
 	})
 	if err != nil {
-		logrus.Error("error to get dashboard config maps %v", err)
+		logrus.Errorf("error to get dashboard config maps %v", err)
 		return nil, err
 	}
 
@@ -67,7 +67,7 @@ func (kc *K8sClient) GetConfigMaps(namespace string) (map[string]v1.ConfigMap, e
 func (kc *K8sClient) CreateConfigMap(cm v1.ConfigMap) (*v1.ConfigMap, error) {
 	ncm, err := kc.client.CoreV1().ConfigMaps(cm.Namespace).Create(context.TODO(), &cm, metav1.CreateOptions{})
 	if err != nil {
-		logrus.Error("error to create config map %v", err)
+		logrus.Errorf("error to create config map %v", err)
 		return &v1.ConfigMap{}, err
 	}
 	return ncm, nil
@@ -78,7 +78,7 @@ func (kc *K8sClient) UpdateConfigMap(ccm v1.ConfigMap, dcm v1.ConfigMap) (*v1.Co
 
 	cm, err := kc.client.CoreV1().ConfigMaps(ccm.Namespace).Update(context.TODO(), &dcm, metav1.UpdateOptions{})
 	if err != nil {
-		logrus.Error("error to update config map %v", err)
+		logrus.Errorf("error to update config map %v", err)
 		return cm, err
 	}
 	return cm, nil
