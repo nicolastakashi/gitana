@@ -7,6 +7,8 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/transport"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,6 +16,12 @@ type Repository struct {
 	Url    string
 	Path   string
 	Branch string
+	Auth   RepositoryAuth
+}
+
+type RepositoryAuth struct {
+	Username string
+	Password string
 }
 
 func (r Repository) Validate() error {
@@ -28,6 +36,15 @@ func (r Repository) Validate() error {
 	if r.Path == "" {
 		return errors.New("repository.branch flag can not be null")
 	}
+
+	if r.Auth.Username != "" && r.Auth.Password == "" {
+		return errors.New("repository.auth.password can not be nil when you inform a username")
+	}
+
+	if r.Auth.Password != "" && r.Auth.Username == "" {
+		return errors.New("repository.auth.username can not be nil when you inform a password")
+	}
+
 	return nil
 }
 
@@ -36,6 +53,7 @@ func (gm *Repository) Get(ctx context.Context) (bool, error) {
 		URL:           gm.Url,
 		ReferenceName: plumbing.NewBranchReferenceName(gm.Branch),
 		Progress:      os.Stdout,
+		Auth:          gm.getAuth(),
 	})
 
 	if err != nil && err == git.ErrRepositoryAlreadyExists {
@@ -58,6 +76,7 @@ func (gm *Repository) Get(ctx context.Context) (bool, error) {
 		err = workTree.PullContext(ctx, &git.PullOptions{
 			ReferenceName: plumbing.NewBranchReferenceName(gm.Branch),
 			Progress:      os.Stdout,
+			Auth:          gm.getAuth(),
 		})
 
 		switch err {
@@ -86,4 +105,14 @@ func (gm *Repository) Get(ctx context.Context) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+func (r Repository) getAuth() transport.AuthMethod {
+	if r.Auth.Username != "" && r.Auth.Password != "" {
+		return &http.BasicAuth{
+			Username: r.Auth.Username,
+			Password: r.Auth.Password,
+		}
+	}
+	return nil
 }

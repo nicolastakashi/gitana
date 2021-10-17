@@ -116,6 +116,8 @@ func init() {
 	syncCmd.Flags().StringVar(&serverPort, "http.port", ":9754", "listem port for http endpoints")
 	syncCmd.Flags().StringVar(&pcmd.Repository.Url, "repository.url", "", "git repository url")
 	syncCmd.Flags().StringVar(&pcmd.Repository.Path, "repository.path", "", "path to clone the git repository")
+	syncCmd.Flags().StringVar(&pcmd.Repository.Auth.Username, "repository.auth.username", "", "username to perform authentication")
+	syncCmd.Flags().StringVar(&pcmd.Repository.Auth.Password, "repository.auth.password", "", "password to perform authentication")
 	syncCmd.Flags().StringVar(&pcmd.Repository.Branch, "repository.branch", "main", "path to clone the git repository")
 	syncCmd.Flags().StringVar(&pcmd.Namespace, "namespace", "default", "namespace that will store the dashboard config map")
 	syncCmd.Flags().StringVar(&pcmd.DashboardLabels, "dashboard.labels", "grafana_dashboard=nil", "dashboard label selector")
