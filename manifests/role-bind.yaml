@@ -1,12 +1,12 @@
-kind: ClusterRoleBinding
+kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: gitana-clusterrolebind
+  name: gitana-rolebind
 subjects:
 - kind: ServiceAccount
   name: gitana
   namespace: gitana
 roleRef:
-  kind: ClusterRole
-  name: gitana-clusterrole
+  kind: Role
+  name: gitana-role
   apiGroup: rbac.authorization.k8s.io

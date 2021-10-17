@@ -1,15 +1,25 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: netshoot
+  name: gitana
+  namespace: gitana
 spec:
   containers:
-    - command:
-        - sleep
-        - "72000"
-      image: nicolaka/netshoot
+    - args:
+        - sync
+        - --repository.url=https://github.com/nicolastakashi/poc
+        - --repository.path=/tmp/gitana/dashboards
+        - --dashboard.labels=grafana_dashboard=true 
+        - --dashboard.folder-annotation=dashboard-folder
+        - --log.level=info
+        - --namespace=gitana
+      ports:
+        - name: http
+          containerPort: 9754
+          protocol: TCP
+      image: gitana
       imagePullPolicy: IfNotPresent
-      name: netshoot
+      name: gitana
       resources:
         limits:
           cpu: "200m"
