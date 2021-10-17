@@ -130,7 +130,7 @@ func init() {
 	syncCmd.Flags().StringVar(&pcmd.Namespace, "namespace", "default", "namespace that will store the dashboard config map")
 	syncCmd.Flags().StringVar(&pcmd.DashboardLabels, "dashboard.labels", "grafana_dashboard=nil", "dashboard label selector")
 	syncCmd.Flags().StringVar(&pcmd.DashboardFolderAnnotation, "dashboard.folder-annotation", "", "dashboard folder annotation")
-	syncCmd.Flags().DurationVar(&pcmd.SyncTimer, "sync-timer", 10*time.Second, "interval to sync and sync dashboards")
+	syncCmd.Flags().DurationVar(&pcmd.SyncTimer, "sync-timer", 300*time.Second, "interval to sync and sync dashboards")
 	syncCmd.Flags().StringVar(&pcmd.LogLevel, "log.level", logrus.InfoLevel.String(), "listem port for http endpoints")
 	syncCmd.Flags().StringVar(&pcmd.KubeConfig, "kubeconfig", "", "(optional) absolute path to the kubeconfig file")
 	rootCmd.AddCommand(syncCmd)
