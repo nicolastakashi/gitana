@@ -48,18 +48,18 @@ func (r Repository) Validate() error {
 	return nil
 }
 
-func (gm *Repository) Get(ctx context.Context) (bool, error) {
-	_, err := git.PlainCloneContext(ctx, gm.Path, false, &git.CloneOptions{
-		URL:           gm.Url,
-		ReferenceName: plumbing.NewBranchReferenceName(gm.Branch),
+func (r *Repository) Get(ctx context.Context) (bool, error) {
+	_, err := git.PlainCloneContext(ctx, r.Path, false, &git.CloneOptions{
+		URL:           r.Url,
+		ReferenceName: plumbing.NewBranchReferenceName(r.Branch),
 		Progress:      os.Stdout,
-		Auth:          gm.getAuth(),
+		Auth:          r.getAuth(),
 	})
 
 	if err != nil && err == git.ErrRepositoryAlreadyExists {
 		logrus.Info("git repository already exists, trying pull")
 
-		repo, err := git.PlainOpen(gm.Path)
+		repo, err := git.PlainOpen(r.Path)
 
 		if err != nil {
 			logrus.Error("error opening git repository folder: %v", err)
@@ -74,9 +74,9 @@ func (gm *Repository) Get(ctx context.Context) (bool, error) {
 		}
 
 		err = workTree.PullContext(ctx, &git.PullOptions{
-			ReferenceName: plumbing.NewBranchReferenceName(gm.Branch),
+			ReferenceName: plumbing.NewBranchReferenceName(r.Branch),
 			Progress:      os.Stdout,
-			Auth:          gm.getAuth(),
+			Auth:          r.getAuth(),
 		})
 
 		switch err {
@@ -88,14 +88,14 @@ func (gm *Repository) Get(ctx context.Context) (bool, error) {
 
 			logrus.Warn("conflicts with current repo. cloning again. %v", err)
 
-			err = os.RemoveAll(gm.Path)
+			err = os.RemoveAll(r.Path)
 
 			if err != nil {
 				logrus.Error("error deleting repo folder: %v", err)
 				return false, err
 			}
 
-			return gm.Get(ctx)
+			return r.Get(ctx)
 		default:
 			logrus.Error("error pulling repo: %v", err)
 			return false, err
