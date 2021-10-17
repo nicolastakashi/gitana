@@ -4,7 +4,7 @@ REVISION ?= $(shell git rev-parse HEAD)
 BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
 BINARY_FOLDER=bin
 BINARY_NAME=gitana
-
+ARTIFACT_NAME=ntakashi/$(BINARY_NAME)
 GOCMD=go
 GOMAIN=main.go
 GOBUILD=$(GOCMD) build
@@ -16,6 +16,12 @@ LDFLAGS=-w -extldflags "-static" \
 		-X github.com/prometheus/common/version.Branch=$(BRANCH) \
 		-X github.com/prometheus/common/version.BuildUser=$(shell whoami) \
 		-X "github.com/prometheus/common/version.BuildDate=$(shell date -u)"
+
+docker-build:
+	@DOCKER_BUILDKIT=1 docker build -t ${ARTIFACT_NAME}:${RELEASE_VERSION} -f ./Dockerfile --progress=plain .
+
+docker-push:
+	@DOCKER_BUILDKIT=1 docker push $(ARTIFACT_NAME):${RELEASE_VERSION}
 		
 deps:
 	$(ENVVARS) $(GOCMD) mod download
