@@ -43,6 +43,17 @@ Addresses #bugnumber (in this specific format)
 
 You can contribute to Gitana Core with issues and PRs. Simply filing issues for problems you encounter is a great way to contribute. Contributing implementations is greatly appreciated.
 
+For complete instructions on how to compile see: Building From Source
+
+For quickly compiling and testing your changes do:
+
+```bash
+# For building.
+make build
+
+./bin/gitana
+```
+
 ## Suggested Workflow
 
 We use and recommend the following workflow:
