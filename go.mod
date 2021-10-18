@@ -15,6 +15,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0
+	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.1 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20210929161516-d455829e376d // indirect
