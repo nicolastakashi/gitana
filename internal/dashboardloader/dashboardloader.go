@@ -22,7 +22,7 @@ type Dashboard struct {
 	Dashboard map[string]interface{}
 }
 
-func Load(path string) map[string]Dashboard {
+func Load(path string) (map[string]Dashboard, error) {
 	dashboards := map[string]Dashboard{}
 
 	err := filepath.Walk(path, func(path string, fi fs.FileInfo, err error) error {
@@ -59,10 +59,10 @@ func Load(path string) map[string]Dashboard {
 	})
 
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
-	return dashboards
+	return dashboards, nil
 }
 
 func readDashboardFile(path string, value *map[string]interface{}) error {
@@ -75,9 +75,17 @@ func readDashboardFile(path string, value *map[string]interface{}) error {
 
 	defer dashboardFile.Close()
 
-	byteValue, _ := ioutil.ReadAll(dashboardFile)
+	byteValue, err := ioutil.ReadAll(dashboardFile)
 
-	json.Unmarshal([]byte(byteValue), &value)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal([]byte(byteValue), &value)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
