@@ -6,7 +6,7 @@ Contributions are very welcome! See our [CONTRIBUTING.md](CONTRIBUTING.md) for m
 
 ## Docker images
 
-Docker images are available on [Quay.io](https://quay.io) or [Docker Hub](https://hub.docker.com/).
+Docker images are available on [Docker Hub](https://hub.docker.com/repository/docker/ntakashi/gitana).
 
 ## Building from source
 
