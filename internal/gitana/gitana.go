@@ -77,7 +77,11 @@ func start(ctx context.Context, pcmd command.Sync) error {
 		return err
 	}
 
-	dashboards := dashboardloader.Load(pcmd.Repository.Path)
+	dashboards, err := dashboardloader.Load(pcmd.Repository.Path)
+
+	if err != nil {
+		return err
+	}
 
 	if len(dashboards) == 0 {
 		logrus.Warn("no dashboards found")
