@@ -42,8 +42,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: ls
+        run: ls -la
+
       - name: build docker
+        if: github.event_name != 'pull_request'
         run: make docker-build
       
       - name: push docker
+        if: github.event_name != 'pull_request'
         run: make docker-push
