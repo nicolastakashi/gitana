@@ -4,6 +4,18 @@ import (
 	"testing"
 )
 
+func TestLoadInvalidPath(t *testing.T) {
+	dashboards, err := Load("./dev/blabla")
+
+	if err == nil {
+		t.Fatal("load an path file must return an error")
+	}
+
+	if len(dashboards) > 0 {
+		t.Fatal("load an invalid path must not return a dashboard struct")
+	}
+}
+
 func TestLoadInvalidFile(t *testing.T) {
 	dashboards, err := Load("./testdata/invalid")
 
