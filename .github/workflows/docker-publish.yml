@@ -43,7 +43,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: build docker
-        run: make build-docker
+        run: make docker-build
       
       - name: push docker
-        run: make push-docker
+        run: make docker-push
