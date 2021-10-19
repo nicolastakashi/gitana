@@ -17,14 +17,13 @@ Flags:
   -h, --help                                 help for sync
       --http.port string                     listem port for http endpoints (default ":9754")
       --kubeconfig string                    (optional) absolute path to the kubeconfig file
-      --log.level string                     listem port for http endpoints (default "info")
+      --log.level string                     log level (default "info")
       --namespace string                     namespace that will store the dashboard config map (default "default")
       --repository.auth.password string      password to perform authentication
       --repository.auth.username string      username to perform authentication
-      --repository.branch string             path to clone the git repository (default "main")
-      --repository.path string               path to clone the git repository
+      --repository.branch string             git repository branch (default "main")
       --repository.url string                git repository url
-      --sync-timer duration                  interval to sync and sync dashboards (default 5m0s)
+      --sync-timer duration                  interval to sync and sync dashboards (default 5m)
 
 ```
 
