@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -49,6 +50,7 @@ var syncCmd = &cobra.Command{
 		logrus.Info("Welcome to gitana...")
 
 		if err := pcmd.Validate(); err != nil {
+			logrus.Error(err)
 			os.Exit(1)
 		}
 
@@ -108,6 +110,38 @@ func createHttpServer(port string) *http.Server {
 	mux := http.NewServeMux()
 
 	mux.Handle("/metrics", promhttp.Handler())
+	mux.HandleFunc("/-/health", func(rw http.ResponseWriter, _ *http.Request) {
+		rw.WriteHeader(http.StatusOK)
+		rw.Header().Set("Content-Type", "application/json")
+
+		resp := map[string]string{
+			"message": "Healthy",
+		}
+
+		jsonResp, err := json.Marshal(resp)
+
+		if err != nil {
+			log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+		}
+
+		rw.Write(jsonResp)
+	})
+	mux.HandleFunc("/-/ready", func(rw http.ResponseWriter, _ *http.Request) {
+		rw.WriteHeader(http.StatusOK)
+		rw.Header().Set("Content-Type", "application/json")
+
+		resp := map[string]string{
+			"message": "Ready",
+		}
+
+		jsonResp, err := json.Marshal(resp)
+
+		if err != nil {
+			log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+		}
+
+		rw.Write(jsonResp)
+	})
 
 	srv := &http.Server{
 		Addr:     port,
