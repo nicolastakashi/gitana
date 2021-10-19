@@ -126,6 +126,22 @@ func createHttpServer(port string) *http.Server {
 
 		rw.Write(jsonResp)
 	})
+	mux.HandleFunc("/-/ready", func(rw http.ResponseWriter, _ *http.Request) {
+		rw.WriteHeader(http.StatusOK)
+		rw.Header().Set("Content-Type", "application/json")
+
+		resp := map[string]string{
+			"message": "Ready",
+		}
+
+		jsonResp, err := json.Marshal(resp)
+
+		if err != nil {
+			log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+		}
+
+		rw.Write(jsonResp)
+	})
 
 	srv := &http.Server{
 		Addr:     port,
