@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gitana.fullname" . }}
+  labels:
+    {{- include "gitana.labels" . | nindent 4 }}
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      {{- include "gitana.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "gitana.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "gitana.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          args:
+            - sync
+            - --log.level={{ .Values.flags.log.level }}
+            - --sync-timer={{ .Values.flags.syncTimer }}
+            {{- if .Values.flags.kubeconfig }}
+            - --kubeconfig={{ .Values.flags.kubeconfig }}
+            {{- end }}
+            {{- if .Values.flags.dashboard.folderAnnotation }}
+            - --dashboard.folder-annotation={{ .Values.flags.dashboard.folderAnnotation }}
+            {{- end }}
+            - --dashboard.labels={{- include "dashboard.labels" . | trimSuffix "," }} 
+            - --namespace={{ .Values.flags.namespace }}
+            {{- if .Values.flags.repository.auth }}
+            - --repository.auth.user={{ .Values.flags.repository.auth }}
+            - --repository.auth.user={{ .Values.flags.repository.password }}
+            {{- end }}
+            - --repository.branch={{ .Values.flags.repository.branch }}
+            - --repository.path=/tmp/gitana/repository
+            - --repository.url={{ .Values.flags.repository.url }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 9754
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /-/health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /tmp/gitana
+              name: gitana
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: gitana
+          emptyDir: {}
