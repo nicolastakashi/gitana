@@ -37,7 +37,7 @@ Docker images are available on [Docker Hub](https://hub.docker.com/repository/do
 
 ## Building from source
 
-To build Prometheus from source code, first ensure that you have a working
+To build Gitana from source code, first ensure that you have a working
 Go environment with [version 1.16 or greater installed](https://golang.org/doc/install).
 
 To build the source code you can use the `make build`, which will compile in
