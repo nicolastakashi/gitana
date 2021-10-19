@@ -33,7 +33,7 @@ Contributions are very welcome! See our [CONTRIBUTING.md](CONTRIBUTING.md) for m
 
 ## Docker images
 
-Docker images are available on [Docker Hub](https://hub.docker.com/repository/docker/ntakashi/gitana).
+Docker images are available on [Docker Hub](https://hub.docker.com/r/ntakashi/gitana).
 
 ## Building from source
 
