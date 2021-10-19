@@ -49,6 +49,7 @@ var syncCmd = &cobra.Command{
 		logrus.Info("Welcome to gitana...")
 
 		if err := pcmd.Validate(); err != nil {
+			logrus.Error(err)
 			os.Exit(1)
 		}
 
