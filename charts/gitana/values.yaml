@@ -1,0 +1,103 @@
+image:
+  repository: ntakashi/gitana
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: 0.1.0
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext:
+  readOnlyRootFilesystem: true
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Prometheus Operator ServiceMonitor configuration
+serviceMonitor:
+
+  # if `true`, creates a Prometheus Operator ServiceMonitor
+  enabled: false
+  
+  # Interval at which metrics should be scraped.
+  # ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+  interval: ""
+
+  # Timeout after which the scrape is ended
+  # ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+  scrapeTimeout: ""
+
+flags:
+  # (optional) absolute path to the kubeconfig file
+  kubeconfig: ""
+
+  # namespace that will store the dashboard config map (default "default")
+  namespace: gitana
+  
+  # interval to sync dashboards (default 5m)
+  syncTimer: 5m
+  
+  log:
+    # log level (default "info")
+    level: info
+
+  dashboard:
+    # dashboard folder annotation
+    # ref: https://github.com/grafana/helm-charts/tree/main/charts/grafana#configuration
+    # sidecar.dashboards.folderAnnotation
+    folderAnnotation: dashboard-folder
+
+    # dashboard label selector (default "grafana_dashboard=nil")
+    # ref: https://github.com/grafana/helm-charts/tree/main/charts/grafana#configuration
+    # sidecar.dashboards.label
+    # sidecar.dashboards.labelValue
+    labels: 
+      - name: grafana-dashboard
+        value: nil
+
+  repository:
+    # repository branch (default "main")
+    branch: main
+
+    # repository url
+    url: "https://github.com/nicolastakashi/poc"
+
+    auth: {}
+      # username to perform authentication
+      # user: ""
+      # password to perform authentication
+      # password:
