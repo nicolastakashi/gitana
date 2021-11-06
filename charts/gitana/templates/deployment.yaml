@@ -43,6 +43,9 @@ spec:
             - --repository.auth.user={{ .Values.flags.repository.auth }}
             - --repository.auth.user={{ .Values.flags.repository.password }}
             {{- end }}
+            {{- if .Values.flags.repository.dashboardPath }}
+            - --repository.dashboard-path={{ .Values.flags.repository.dashboardPath }}
+            {{- end }}
             - --repository.branch={{ .Values.flags.repository.branch }}
             - --repository.path=/tmp/gitana/repository
             - --repository.url={{ .Values.flags.repository.url }}
