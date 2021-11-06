@@ -3,6 +3,16 @@ entries:
   gitana:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2021-11-06T22:35:32.751310648Z"
+    description: A Helm chart for Kubernetes
+    digest: 6f94bdd1436187c3451c63eb7e2df72662f936c7a87092f0e5bbf6872e1a4bea
+    name: gitana
+    type: application
+    urls:
+    - https://github.com/nicolastakashi/gitana/releases/download/gitana-1.1.0/gitana-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2021-10-24T15:45:00.538529825Z"
     description: A Helm chart for Kubernetes
     digest: e25bff10dff85af365cc2c27b7f57a59b9803f1dd1378a5f76f7f0cde97061f8
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://github.com/nicolastakashi/gitana/releases/download/gitana-1.0.0/gitana-1.0.0.tgz
     version: 1.0.0
-generated: "2021-10-24T15:45:00.538536825Z"
+generated: "2021-11-06T22:35:32.751327249Z"
