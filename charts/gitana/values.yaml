@@ -92,9 +92,12 @@ flags:
   repository:
     # repository branch (default "main")
     branch: main
+    
+    # folder where the dashboards are present into the git repository.
+    dashboardPath: ""
 
     # repository url
-    url: "https://github.com/nicolastakashi/poc"
+    url: ""
 
     auth: {}
       # username to perform authentication
