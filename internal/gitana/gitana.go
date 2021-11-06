@@ -77,7 +77,7 @@ func start(ctx context.Context, pcmd command.Sync) error {
 		return err
 	}
 
-	dashboards, err := dashboardloader.Load(pcmd.Repository.Path)
+	dashboards, err := dashboardloader.Load(pcmd.Repository.GetPath())
 
 	if err != nil {
 		return err

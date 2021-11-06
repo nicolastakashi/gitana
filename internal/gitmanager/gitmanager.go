@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"os"
+	"path/filepath"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -13,10 +14,11 @@ import (
 )
 
 type Repository struct {
-	Url    string
-	Path   string
-	Branch string
-	Auth   RepositoryAuth
+	Url           string
+	Path          string
+	Branch        string
+	DashboardPath string
+	Auth          RepositoryAuth
 }
 
 type RepositoryAuth struct {
@@ -115,4 +117,11 @@ func (r Repository) getAuth() transport.AuthMethod {
 		}
 	}
 	return nil
+}
+
+func (r Repository) GetPath() string {
+	if r.DashboardPath != "" {
+		return filepath.Join(r.Path, r.DashboardPath)
+	}
+	return r.Path
 }
