@@ -22,8 +22,9 @@ type Repository struct {
 }
 
 type RepositoryAuth struct {
-	Username string
-	Password string
+	Username       string `yaml:"username"`
+	AuthSecretName string
+	Password       string `yaml:"password"`
 }
 
 func (r Repository) Validate() error {
