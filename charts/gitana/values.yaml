@@ -61,6 +61,14 @@ serviceMonitor:
   # ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
   scrapeTimeout: ""
 
+authSecret:
+  enabled: true
+  create: true
+  secretname: ""
+  annotations: {}
+  username: "cenas"
+  password: "123"
+
 flags:
   # (optional) absolute path to the kubeconfig file
   kubeconfig: ""

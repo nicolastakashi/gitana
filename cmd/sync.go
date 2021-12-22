@@ -159,6 +159,7 @@ func init() {
 	syncCmd.Flags().StringVar(&pcmd.Repository.Url, "repository.url", "", "git repository url")
 	syncCmd.Flags().StringVar(&pcmd.Repository.Path, "repository.path", "", "path to clone the git repository")
 	syncCmd.Flags().StringVar(&pcmd.Repository.DashboardPath, "repository.dashboard-path", "", "path where the dashboards are places in git repository")
+	syncCmd.Flags().StringVar(&pcmd.Repository.Auth.AuthSecretName, "repository.auth.secretname", "", "secret name that holds username and password")
 	syncCmd.Flags().StringVar(&pcmd.Repository.Auth.Username, "repository.auth.username", "", "username to perform authentication")
 	syncCmd.Flags().StringVar(&pcmd.Repository.Auth.Password, "repository.auth.password", "", "password to perform authentication")
 	syncCmd.Flags().StringVar(&pcmd.Repository.Branch, "repository.branch", "main", "path to clone the git repository")

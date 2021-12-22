@@ -2,6 +2,7 @@ package gitana
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/gitana/internal/command"
@@ -10,6 +11,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -71,7 +73,33 @@ func Start(ctx context.Context, pcmd command.Sync) error {
 func start(ctx context.Context, pcmd command.Sync) error {
 	timer := prometheus.NewTimer(syncLatency)
 
-	_, err := pcmd.Repository.Get(ctx)
+	client, err := k8sclient.New(pcmd.KubeConfig)
+
+	if err != nil {
+		return err
+	}
+
+	if pcmd.Repository.Auth.AuthSecretName != "" {
+		secret, err := client.GetSecret(pcmd.Namespace, pcmd.Repository.Auth.AuthSecretName)
+		if err != nil {
+			return err
+		}
+
+		secretData := secret.Data["auth.yaml"]
+
+		if secretData == nil {
+			return errors.New("auth secret there is no auth.yaml")
+		}
+
+		err = yaml.Unmarshal(secretData, &pcmd.Repository.Auth)
+
+		if err != nil {
+			logrus.Errorf("error to unmarshal auth secret %v", err)
+			return err
+		}
+	}
+
+	_, err = pcmd.Repository.Get(ctx)
 
 	if err != nil {
 		return err
@@ -86,12 +114,6 @@ func start(ctx context.Context, pcmd command.Sync) error {
 	if len(dashboards) == 0 {
 		logrus.Warn("no dashboards found")
 		return nil
-	}
-
-	client, err := k8sclient.New(pcmd.KubeConfig)
-
-	if err != nil {
-		return err
 	}
 
 	configMaps, err := client.GetConfigMaps(pcmd.Namespace)

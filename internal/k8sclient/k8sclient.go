@@ -64,6 +64,17 @@ func (kc *K8sClient) GetConfigMaps(namespace string) (map[string]v1.ConfigMap, e
 	return cmMap, nil
 }
 
+func (kc *K8sClient) GetSecret(namespace string, name string) (*v1.Secret, error) {
+	secret, err := kc.client.CoreV1().Secrets(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+
+	if err != nil {
+		logrus.Errorf("error to secret %v", err)
+		return nil, err
+	}
+
+	return secret, nil
+}
+
 func (kc *K8sClient) CreateConfigMap(cm v1.ConfigMap) (*v1.ConfigMap, error) {
 	ncm, err := kc.client.CoreV1().ConfigMaps(cm.Namespace).Create(context.TODO(), &cm, metav1.CreateOptions{})
 	if err != nil {
