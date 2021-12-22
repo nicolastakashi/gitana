@@ -66,3 +66,11 @@ Create the name of the service account to use
 {{- range .Values.flags.dashboard.labels }}{{(print .name "=" .value ) }},{{- end }}
 {{- end }}
 {{- end }}
+
+{{- define "gitana.authSecretName" -}}
+{{- if .Values.authSecret.secretname }}
+{{- .Values.authSecret.secretname }}
+{{- else }}
+{{- printf "%s-auth-secret" (include "gitana.fullname" .) }}
+{{- end }}
+{{- end }}
