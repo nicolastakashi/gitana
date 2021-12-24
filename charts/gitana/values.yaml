@@ -2,7 +2,7 @@ image:
   repository: ntakashi/gitana
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.1.0
+  tag: 1.2.0
 
 imagePullSecrets: []
 nameOverride: ""
@@ -61,14 +61,6 @@ serviceMonitor:
   # ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
   scrapeTimeout: ""
 
-authSecret:
-  enabled: true
-  create: true
-  secretname: ""
-  annotations: {}
-  username: "cenas"
-  password: "123"
-
 flags:
   # (optional) absolute path to the kubeconfig file
   kubeconfig: ""
@@ -107,8 +99,13 @@ flags:
     # repository url
     url: ""
 
-    auth: {}
-      # username to perform authentication
-      # user: ""
-      # password to perform authentication
-      # password:
+    # auth secret configuration
+    auth:
+      enabled: false
+      username: ""
+      password: ""
+      secret:
+        create: true
+        name: ""
+        annotations: {}
+        labels: {}

@@ -39,11 +39,7 @@ spec:
             {{- end }}
             - --dashboard.labels={{- include "dashboard.labels" . | trimSuffix "," }} 
             - --namespace={{ .Values.flags.namespace }}
-            {{- if .Values.flags.repository.auth }}
-            - --repository.auth.user={{ .Values.flags.repository.auth }}
-            - --repository.auth.user={{ .Values.flags.repository.password }}
-            {{- end }}
-            {{- if .Values.authSecret.enabled }}
+            {{- if .Values.flags.repository.auth.enabled }}
             - --repository.auth.secretname={{ include "gitana.authSecretName" . }}
             {{- end }}
             {{- if .Values.flags.repository.dashboardPath }}
