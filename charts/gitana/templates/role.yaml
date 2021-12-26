@@ -12,3 +12,8 @@ rules:
       - get
       - list
       - update
+  - apiGroups: [""]
+    resources:
+      - secrets
+    verbs:
+      - get
