@@ -68,8 +68,8 @@ Create the name of the service account to use
 {{- end }}
 
 {{- define "gitana.authSecretName" -}}
-{{- if .Values.authSecret.secretname }}
-{{- .Values.authSecret.secretname }}
+{{- if .Values.flags.repository.auth.secret.name }}
+{{- .Values.flags.repository.auth.secret.name }}
 {{- else }}
 {{- printf "%s-auth-secret" (include "gitana.fullname" .) }}
 {{- end }}
