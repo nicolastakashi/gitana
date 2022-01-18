@@ -47,6 +47,9 @@ tolerations: []
 
 affinity: {}
 
+env: {}
+  # HTTPS_PROXY: "http://proxy.com"
+
 # Prometheus Operator ServiceMonitor configuration
 serviceMonitor:
 
