@@ -8,11 +8,11 @@ metadata:
 spec:
   endpoints:
     - port: http
-      {{- if .Values.metrics.serviceMonitor.interval }}
-      interval: {{ .Values.metrics.serviceMonitor.interval }}
+      {{- if .Values.serviceMonitor.interval }}
+      interval: {{ .Values.serviceMonitor.interval }}
       {{- end }}
-      {{- if .Values.metrics.serviceMonitor.scrapeTimeout }}
-      scrapeTimeout: {{ .Values.metrics.serviceMonitor.scrapeTimeout }}
+      {{- if .Values.serviceMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ .Values.serviceMonitor.scrapeTimeout }}
       {{- end }}
   namespaceSelector:
     matchNames:
@@ -20,4 +20,4 @@ spec:
   selector:
     matchLabels:
       {{- include "gitana.selectorLabels" . | nindent 4 }}
-{{- end}}
+{{- end }}
