@@ -3,13 +3,17 @@ package gitmanager
 import (
 	"context"
 	"errors"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport"
-	"github.com/go-git/go-git/v5/plumbing/transport/http"
+	"github.com/go-git/go-git/v5/plumbing/transport/client"
+	githttp "github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/sirupsen/logrus"
 )
 
@@ -52,6 +56,26 @@ func (r Repository) Validate() error {
 }
 
 func (r *Repository) Get(ctx context.Context) (bool, error) {
+	os.Setenv("HTTPS_PROXY", "http://proxy-we1-dev.afftech.info:8080")
+
+	if httpsProxy := os.Getenv("HTTPS_PROXY"); httpsProxy != "" {
+		proxyUrl, err := url.Parse(httpsProxy)
+
+		if err != nil {
+			return false, err
+		}
+
+		customClient := &http.Client{
+			Transport: &http.Transport{
+				Proxy: http.ProxyURL(proxyUrl),
+			},
+
+			Timeout: 300 * time.Second,
+		}
+
+		client.InstallProtocol("https", githttp.NewClient(customClient))
+	}
+
 	_, err := git.PlainCloneContext(ctx, r.Path, false, &git.CloneOptions{
 		URL:           r.Url,
 		ReferenceName: plumbing.NewBranchReferenceName(r.Branch),
@@ -112,7 +136,7 @@ func (r *Repository) Get(ctx context.Context) (bool, error) {
 
 func (r Repository) getAuth() transport.AuthMethod {
 	if r.Auth.Username != "" && r.Auth.Password != "" {
-		return &http.BasicAuth{
+		return &githttp.BasicAuth{
 			Username: r.Auth.Username,
 			Password: r.Auth.Password,
 		}
