@@ -56,9 +56,9 @@ func (r Repository) Validate() error {
 }
 
 func (r *Repository) Get(ctx context.Context) (bool, error) {
-	os.Setenv("HTTPS_PROXY", "http://proxy-we1-dev.afftech.info:8080")
-
 	if httpsProxy := os.Getenv("HTTPS_PROXY"); httpsProxy != "" {
+		logrus.Debug("using proxy %v", httpsProxy)
+
 		proxyUrl, err := url.Parse(httpsProxy)
 
 		if err != nil {
