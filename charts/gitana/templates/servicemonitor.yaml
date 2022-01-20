@@ -19,5 +19,5 @@ spec:
       - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      {{- include "gitana.selectorLabels" . | nindent 4 }}
+      {{- include "gitana.selectorLabels" . | nindent 6 }}
 {{- end }}
