@@ -54,7 +54,7 @@ env: {}
 serviceMonitor:
 
   # if `true`, creates a Prometheus Operator ServiceMonitor
-  enabled: true
+  enabled: false
   
   # Interval at which metrics should be scraped.
   # ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
