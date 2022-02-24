@@ -93,6 +93,9 @@ flags:
         value: nil
 
   repository:
+    # (optional) proxy dns
+    proxy: "cenas"
+
     # repository branch (default "main")
     branch: main
     

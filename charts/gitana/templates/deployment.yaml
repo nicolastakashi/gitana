@@ -45,6 +45,9 @@ spec:
             {{- if .Values.flags.repository.dashboardPath }}
             - --repository.dashboard-path={{ .Values.flags.repository.dashboardPath }}
             {{- end }}
+            {{- if .Values.flags.repository.proxy }}
+            - --repository.proxy={{ .Values.flags.repository.proxy }}
+            {{- end }}
             - --repository.branch={{ .Values.flags.repository.branch }}
             - --repository.path=/tmp/gitana/repository
             - --repository.url={{ .Values.flags.repository.url }}
