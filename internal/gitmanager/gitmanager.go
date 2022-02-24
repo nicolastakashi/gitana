@@ -75,7 +75,7 @@ func (r *Repository) Get(ctx context.Context) (bool, error) {
 			Timeout: 300 * time.Second,
 		}
 
-		client.InstallProtocol("https", githttp.NewClient(customClient))
+		client.InstallProtocol(proxyUrl.Scheme, githttp.NewClient(customClient))
 	}
 
 	_, err := git.PlainCloneContext(ctx, r.Path, false, &git.CloneOptions{
