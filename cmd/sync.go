@@ -163,6 +163,7 @@ func init() {
 	syncCmd.Flags().StringVar(&pcmd.Repository.Auth.Username, "repository.auth.username", "", "username to perform authentication")
 	syncCmd.Flags().StringVar(&pcmd.Repository.Auth.Password, "repository.auth.password", "", "password to perform authentication")
 	syncCmd.Flags().StringVar(&pcmd.Repository.Branch, "repository.branch", "main", "path to clone the git repository")
+	syncCmd.Flags().StringVar(&pcmd.Repository.Proxy, "repository.proxy", "", "https proxy url")
 	syncCmd.Flags().StringVar(&pcmd.Namespace, "namespace", "default", "namespace that will store the dashboard config map")
 	syncCmd.Flags().StringVar(&pcmd.DashboardLabels, "dashboard.labels", "grafana_dashboard=nil", "dashboard label selector")
 	syncCmd.Flags().StringVar(&pcmd.DashboardFolderAnnotation, "dashboard.folder-annotation", "", "dashboard folder annotation")

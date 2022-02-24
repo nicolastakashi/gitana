@@ -21,6 +21,7 @@ type Repository struct {
 	Url           string
 	Path          string
 	Branch        string
+	Proxy         string
 	DashboardPath string
 	Auth          RepositoryAuth
 }
@@ -56,10 +57,11 @@ func (r Repository) Validate() error {
 }
 
 func (r *Repository) Get(ctx context.Context) (bool, error) {
-	if httpsProxy := os.Getenv("HTTPS_PROXY"); httpsProxy != "" {
-		logrus.Debugf("using proxy %v", httpsProxy)
 
-		proxyUrl, err := url.Parse(httpsProxy)
+	if r.Proxy != "" {
+		logrus.Debugf("using proxy %v", r.Proxy)
+
+		proxyUrl, err := url.Parse(r.Proxy)
 
 		if err != nil {
 			return false, err
