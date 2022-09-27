@@ -11,14 +11,12 @@ COPY --chown=gitana:gitana . .
 
 RUN make all
 
-FROM golang:latest as runtime
-
-RUN useradd -ms /bin/bash gitana
+FROM gcr.io/distroless/static:latest-amd64
 
 WORKDIR /gitana
 
 COPY --from=build /go/src/github.com/nicolastakashi/gitana/bin/* /bin/
 
-USER gitana
+USER nobody
 
 ENTRYPOINT [ "/bin/gitana" ]

@@ -35,4 +35,4 @@ vet:
 build:
 	$(ENVVARS) $(GOCMD) build -ldflags '$(LDFLAGS)' -o $(BINARY_FOLDER)/$(BINARY_NAME) -v $(GOMAIN)
 
-all: build fmt vet deps
+all: build fmt vet deps 
