@@ -3,16 +3,11 @@ package gitmanager
 import (
 	"context"
 	"errors"
-	"net/http"
-	"net/url"
-	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport"
-	"github.com/go-git/go-git/v5/plumbing/transport/client"
 	githttp "github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/sirupsen/logrus"
 )
@@ -57,36 +52,21 @@ func (r Repository) Validate() error {
 }
 
 func (r *Repository) Get(ctx context.Context) (bool, error) {
-
-	if r.Proxy != "" {
-		logrus.Debugf("using proxy %v", r.Proxy)
-
-		proxyUrl, err := url.Parse(r.Proxy)
-
-		if err != nil {
-			return false, err
-		}
-
-		customClient := &http.Client{
-			Transport: &http.Transport{
-				Proxy: http.ProxyURL(proxyUrl),
-			},
-
-			Timeout: 300 * time.Second,
-		}
-
-		client.InstallProtocol(proxyUrl.Scheme, githttp.NewClient(customClient))
-	}
-
-	_, err := git.PlainCloneContext(ctx, r.Path, false, &git.CloneOptions{
+	gitCloneOptions := &git.CloneOptions{
 		URL:           r.Url,
 		ReferenceName: plumbing.NewBranchReferenceName(r.Branch),
-		Progress:      os.Stdout,
 		Auth:          r.getAuth(),
-	})
+	}
+
+	_, err := git.PlainCloneContext(ctx, r.Path, false, gitCloneOptions)
+
+	if err != nil && err != git.ErrRepositoryAlreadyExists {
+		logrus.Error(err)
+		return false, err
+	}
 
 	if err != nil && err == git.ErrRepositoryAlreadyExists {
-		logrus.Info("git repository already exists, trying pull")
+		logrus.Debug("git repository already exists, trying pull")
 
 		repo, err := git.PlainOpen(r.Path)
 
@@ -102,33 +82,18 @@ func (r *Repository) Get(ctx context.Context) (bool, error) {
 			return false, err
 		}
 
-		err = workTree.PullContext(ctx, &git.PullOptions{
+		pullOptions := git.PullOptions{
 			ReferenceName: plumbing.NewBranchReferenceName(r.Branch),
-			Progress:      os.Stdout,
 			Auth:          r.getAuth(),
-		})
+		}
 
-		switch err {
-		case nil:
-			break
-		case git.NoErrAlreadyUpToDate:
-			break
-		case err.(*os.PathError):
+		err = workTree.PullContext(ctx, &pullOptions)
 
-			logrus.Warnf("conflicts with current repo. cloning again. %v", err)
-
-			err = os.RemoveAll(r.Path)
-
-			if err != nil {
-				logrus.Errorf("error deleting repo folder: %v", err)
-				return false, err
-			}
-
-			return r.Get(ctx)
-		default:
-			logrus.Errorf("error pulling repo: %v", err)
+		if err != nil && err != git.NoErrAlreadyUpToDate {
+			logrus.Errorf("Could not update the repository %v", err)
 			return false, err
 		}
+
 	} else if err != nil {
 		logrus.Errorf("error to clone git repository: %v", err)
 		return false, err
