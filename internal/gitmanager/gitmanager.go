@@ -3,6 +3,7 @@ package gitmanager
 import (
 	"context"
 	"errors"
+	"os"
 	"path/filepath"
 
 	"github.com/go-git/go-git/v5"
@@ -56,6 +57,7 @@ func (r *Repository) Get(ctx context.Context) (bool, error) {
 		URL:           r.Url,
 		ReferenceName: plumbing.NewBranchReferenceName(r.Branch),
 		Auth:          r.getAuth(),
+		Progress:      os.Stdout,
 	}
 
 	_, err := git.PlainCloneContext(ctx, r.Path, false, gitCloneOptions)
@@ -85,6 +87,7 @@ func (r *Repository) Get(ctx context.Context) (bool, error) {
 		pullOptions := git.PullOptions{
 			ReferenceName: plumbing.NewBranchReferenceName(r.Branch),
 			Auth:          r.getAuth(),
+			Progress:      os.Stdout,
 		}
 
 		err = workTree.PullContext(ctx, &pullOptions)
