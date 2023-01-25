@@ -3,9 +3,13 @@ package gitmanager
 import (
 	"context"
 	"errors"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"time"
 
+	"github.com/go-git/go-git/plumbing/transport/client"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport"
@@ -53,6 +57,27 @@ func (r Repository) Validate() error {
 }
 
 func (r *Repository) Get(ctx context.Context) (bool, error) {
+
+	if r.Proxy != "" {
+		logrus.Debugf("using proxy %v", r.Proxy)
+
+		proxyUrl, err := url.Parse(r.Proxy)
+
+		if err != nil {
+			return false, err
+		}
+
+		customClient := &http.Client{
+			Transport: &http.Transport{
+				Proxy: http.ProxyURL(proxyUrl),
+			},
+
+			Timeout: 300 * time.Second,
+		}
+
+		client.InstallProtocol(proxyUrl.Scheme, githttp.NewClient(customClient))
+	}
+
 	gitCloneOptions := &git.CloneOptions{
 		URL:           r.Url,
 		ReferenceName: plumbing.NewBranchReferenceName(r.Branch),
